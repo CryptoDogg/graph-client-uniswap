@@ -1,0 +1,6 @@
+query TokensView {
+  tokens {
+    id
+    symbol
+  }
+}
