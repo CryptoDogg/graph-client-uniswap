@@ -69,3 +69,11 @@ fn main() -> Result<(), anyhow::Error> {
     table.printstd();
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+}
