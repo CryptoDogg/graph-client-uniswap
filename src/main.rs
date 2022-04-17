@@ -1,6 +1,4 @@
 use ::reqwest::blocking::Client;
-use anyhow::*;
-use clap::Parser;
 use graphql_client::{reqwest::post_graphql_blocking as post_graphql, GraphQLQuery};
 use log::*;
 use prettytable::*;
@@ -10,7 +8,6 @@ extern crate graphql_query_github_example;
 
 use graphql_query_github_example::*;
 
-#[allow(clippy::upper_case_acronyms)]
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "graphql/schema.graphql",
@@ -19,12 +16,6 @@ use graphql_query_github_example::*;
 )]
 struct TokensView;
 
-#[derive(Parser)]
-#[clap(author, about, version)]
-struct Command {
-    #[clap(name = "repository")]
-    repo: String,
-}
 fn main() -> Result<(), anyhow::Error> {
     env_logger::init();
 
