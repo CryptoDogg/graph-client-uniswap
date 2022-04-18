@@ -1,6 +1,19 @@
 query TokensView {
-  tokens {
+  swaps(where: {timestamp_gt: "1650158478"}) {
     id
-    symbol
+    timestamp
+    pair {
+      token0 {
+        symbol
+      }
+      token1 {
+        symbol
+      }
+    }
+    amount0In
+    amount1In
+    amount0Out
+    amount1Out
+    amountUSD
   }
 }

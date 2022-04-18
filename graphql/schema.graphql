@@ -311,8 +311,8 @@ schema {
 
 type Query {
   "Look up a code of conduct by its key"
-  tokens(
+  swaps(
     id: ID!
-    symbol: String!
-  ):[Token]
+    # symbol: String!
+  ):[Swap]
 }
