@@ -1,5 +1,5 @@
-query TokensView {
-  swaps(where: {timestamp_gt: "1650158478"}) {
+query TokensView($timestamp: String!) {
+  swaps(where: {timestamp_gte: $timestamp}, first: 1000, orderBy: timestamp, orderDirection: asc) {
     id
     timestamp
     pair {
