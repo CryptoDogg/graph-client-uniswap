@@ -32,7 +32,7 @@ fn main() -> Result<(), anyhow::Error> {
         .build()?;
 
     let mut timestamp = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs();
-    timestamp -= 3600;
+    timestamp -= 900;
 
     let mut sold_tokens = HashMap::new();
     let mut bought_tokens = HashMap::new();
@@ -97,8 +97,8 @@ fn main() -> Result<(), anyhow::Error> {
         vector
     }
 
-    println!("sold_tokens {:?}", hashmap_sort(sold_tokens));
-    println!("bought_tokens {:?}", hashmap_sort(bought_tokens));
+    println!("sold_tokens {:?}", hashmap_sort(sold_tokens).get(..10).unwrap());
+    println!("bought_tokens {:?}", hashmap_sort(bought_tokens).get(..10).unwrap());
     println!("hash_len {:?}", hash_set.len());
 
     Ok(())
