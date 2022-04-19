@@ -9,7 +9,7 @@ extern crate graphql_query_github_example;
 
 use std::cmp;
 use std::collections::{HashMap, HashSet};
-use std::time::SystemTime;
+use chrono::Local;
 
 // use graphql_query_github_example::*;
 
@@ -32,8 +32,8 @@ fn main() -> Result<(), anyhow::Error> {
         .user_agent("graphql-rust/0.10.0")
         .build()?;
 
-    let mut timestamp = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs();
-    timestamp -= 3600 * 24;
+    let start_time = Local::now();
+    let mut timestamp = start_time.timestamp() - 3600 * 24;
 
     let mut sold_tokens = HashMap::new();
     let mut bought_tokens = HashMap::new();
@@ -66,7 +66,7 @@ fn main() -> Result<(), anyhow::Error> {
                 continue;
             }
             hash_set.insert(swap.id.clone());
-            timestamp = cmp::max(timestamp, swap.timestamp.parse::<u64>().unwrap());
+            timestamp = cmp::max(timestamp, swap.timestamp.parse::<i64>().unwrap());
 
             let token0_symbol = swap.pair.token0.symbol.clone();
             let token1_symbol = swap.pair.token1.symbol.clone();
@@ -99,11 +99,12 @@ fn main() -> Result<(), anyhow::Error> {
     }
 
     println!("hash_len {:?}", hash_set.len());
+    let header = format!("SWAP DATA LAST 24 HOURS AT {}", start_time.format("%Y年%m月%d日 %H:%M:%S"));
     let text_sold = format!("SOLD_TOP10 {:?}", hashmap_sort(&sold_tokens).get(..10).unwrap());
     let text_bought = format!("BOUGHT_TOP10 {:?}", hashmap_sort(&bought_tokens).get(..10).unwrap());
     println!("{}", text_sold);
     println!("{}", text_bought);
-    slack_send( format!("{}{}{}", text_sold, "\n", text_bought));
+    slack_send( format!("{}{}{}{}{}", header, "\n",  text_sold, "\n", text_bought));
 
     Ok(())
 }
