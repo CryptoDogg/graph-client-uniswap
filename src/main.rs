@@ -33,7 +33,7 @@ fn main() -> Result<(), anyhow::Error> {
         .build()?;
 
     let mut timestamp = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs();
-    timestamp -= 3600;
+    timestamp -= 3600 * 24;
 
     let mut sold_tokens = HashMap::new();
     let mut bought_tokens = HashMap::new();
