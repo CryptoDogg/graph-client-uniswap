@@ -1,3 +1,4 @@
+use graphql_query_github_example::slack_send;
 use ::reqwest::blocking::Client;
 use graphql_client::{reqwest::post_graphql_blocking as post_graphql, GraphQLQuery};
 use log::*;
@@ -32,7 +33,7 @@ fn main() -> Result<(), anyhow::Error> {
         .build()?;
 
     let mut timestamp = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs();
-    timestamp -= 900;
+    timestamp -= 3600;
 
     let mut sold_tokens = HashMap::new();
     let mut bought_tokens = HashMap::new();
@@ -91,15 +92,18 @@ fn main() -> Result<(), anyhow::Error> {
         }
     }
 
-    fn hashmap_sort(hashmap: HashMap<String, usize>) -> Vec<(String, usize)> {
+    fn hashmap_sort(hashmap: &HashMap<String, usize>) -> Vec<(&String, &usize)> {
         let mut vector: Vec<_> = hashmap.into_iter().collect();
         vector.sort_by(|x, y| y.1.cmp(&x.1));
         vector
     }
 
-    println!("sold_tokens {:?}", hashmap_sort(sold_tokens).get(..10).unwrap());
-    println!("bought_tokens {:?}", hashmap_sort(bought_tokens).get(..10).unwrap());
     println!("hash_len {:?}", hash_set.len());
+    let text_sold = format!("SOLD_TOP10 {:?}", hashmap_sort(&sold_tokens).get(..10).unwrap());
+    let text_bought = format!("BOUGHT_TOP10 {:?}", hashmap_sort(&bought_tokens).get(..10).unwrap());
+    println!("{}", text_sold);
+    println!("{}", text_bought);
+    slack_send( format!("{}{}{}", text_sold, "\n", text_bought));
 
     Ok(())
 }

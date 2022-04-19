@@ -18,5 +18,5 @@ jobs:
         run: |
           touch .env
           echo "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" >> .env
-      - name: Run tests
-        run: cargo test --verbose
+      - name: Run run
+        run: cargo run --verbose

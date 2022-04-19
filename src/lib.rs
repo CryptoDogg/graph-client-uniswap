@@ -29,3 +29,20 @@ pub fn create_token(conn: &PgConnection, address: &str, symbol: &str) -> Token {
         .get_result(conn)
         .expect("Error saving new token")
 }
+
+#[tokio::main]
+pub async fn slack_send(text: String) -> Result<(), reqwest::Error> {
+    let slack_webhook = dotenv::var("SLACK_WEBHOOK_URL").expect("SLACK_WEBHOOK_URL must be set");
+    let response_body = reqwest::Client::new()
+        .post(slack_webhook)
+        .json(&serde_json::json!({
+            "text": text,
+        }))
+        .send()
+        .await?
+        .text()
+        .await?;
+
+    println!("response body {:#?}", response_body);
+    Ok(())
+}
