@@ -100,11 +100,12 @@ fn main() -> Result<(), anyhow::Error> {
 
     println!("hash_len {:?}", hash_set.len());
     let header = format!("SWAP DATA LAST 24 HOURS AT {}", start_time.format("%Y年%m月%d日 %H:%M:%S"));
+    let total_swap = format!("TOTAL_SWAP: {:?}", hash_set.len());
     let text_sold = format!("SOLD_TOP10 {:?}", hashmap_sort(&sold_tokens).get(..10).unwrap());
     let text_bought = format!("BOUGHT_TOP10 {:?}", hashmap_sort(&bought_tokens).get(..10).unwrap());
     println!("{}", text_sold);
     println!("{}", text_bought);
-    slack_send( format!("{}{}{}{}{}", header, "\n",  text_sold, "\n", text_bought));
+    slack_send( format!("{}{}{}{}{}{}{}", header, "\n", total_swap, "\n", text_sold, "\n", text_bought));
 
     Ok(())
 }
