@@ -91,8 +91,8 @@ fn main() -> Result<(), anyhow::Error> {
         if hash_set.len() == hash_set_temp.len() {
             break;
         }
-        // wait for 0.1 seconds
-        let sleep_time= time::Duration::from_millis(100);
+        // wait for 1 seconds
+        let sleep_time= time::Duration::from_millis(1000);
         thread::sleep(sleep_time);
     }
 
