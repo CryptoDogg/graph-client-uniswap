@@ -1,15 +1,16 @@
-use graphql_query_github_example::slack_send;
 use ::reqwest::blocking::Client;
 use graphql_client::{reqwest::post_graphql_blocking as post_graphql, GraphQLQuery};
+use graphql_query_github_example::slack_send;
 use log::*;
 // use prettytable::*;
 
 extern crate diesel;
 extern crate graphql_query_github_example;
 
+use chrono::Local;
 use std::cmp;
 use std::collections::{HashMap, HashSet};
-use chrono::Local;
+use std::{thread, time};
 
 // use graphql_query_github_example::*;
 
@@ -90,6 +91,9 @@ fn main() -> Result<(), anyhow::Error> {
         if hash_set.len() == hash_set_temp.len() {
             break;
         }
+        // wait 0.1 seconds
+        let ten_millis = time::Duration::from_millis(100);
+        thread::sleep(ten_millis);
     }
 
     fn hashmap_sort(hashmap: &HashMap<String, usize>) -> Vec<(&String, &usize)> {
@@ -99,13 +103,25 @@ fn main() -> Result<(), anyhow::Error> {
     }
 
     println!("hash_len {:?}", hash_set.len());
-    let header = format!("SWAP DATA LAST 24 HOURS AT {}", start_time.format("%Y年%m月%d日 %H:%M:%S"));
+    let header = format!(
+        "SWAP DATA LAST 24 HOURS AT {}",
+        start_time.format("%Y年%m月%d日 %H:%M:%S")
+    );
     let total_swap = format!("TOTAL_SWAP: {:?}", hash_set.len());
-    let text_sold = format!("SOLD_TOP10 {:?}", hashmap_sort(&sold_tokens).get(..10).unwrap());
-    let text_bought = format!("BOUGHT_TOP10 {:?}", hashmap_sort(&bought_tokens).get(..10).unwrap());
+    let text_sold = format!(
+        "SOLD_TOP10 {:?}",
+        hashmap_sort(&sold_tokens).get(..10).unwrap()
+    );
+    let text_bought = format!(
+        "BOUGHT_TOP10 {:?}",
+        hashmap_sort(&bought_tokens).get(..10).unwrap()
+    );
     println!("{}", text_sold);
     println!("{}", text_bought);
-    slack_send( format!("{}{}{}{}{}{}{}", header, "\n", total_swap, "\n", text_sold, "\n", text_bought));
+    slack_send(format!(
+        "{}{}{}{}{}{}{}",
+        header, "\n", total_swap, "\n", text_sold, "\n", text_bought
+    ));
 
     Ok(())
 }
