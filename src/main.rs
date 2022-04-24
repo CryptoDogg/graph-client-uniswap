@@ -91,9 +91,9 @@ fn main() -> Result<(), anyhow::Error> {
         if hash_set.len() == hash_set_temp.len() {
             break;
         }
-        // wait 0.1 seconds
-        let ten_millis = time::Duration::from_millis(100);
-        thread::sleep(ten_millis);
+        // wait for 0.1 seconds
+        let sleep_time= time::Duration::from_millis(100);
+        thread::sleep(sleep_time);
     }
 
     fn hashmap_sort(hashmap: &HashMap<String, usize>) -> Vec<(&String, &usize)> {
