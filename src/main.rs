@@ -8,8 +8,10 @@ extern crate diesel;
 extern crate graphql_query_github_example;
 
 use chrono::Local;
+use retry::{delay, retry, OperationResult};
 use std::cmp;
 use std::collections::{HashMap, HashSet};
+use std::time::SystemTime;
 use std::{thread, time};
 
 // use graphql_query_github_example::*;
@@ -43,22 +45,32 @@ fn main() -> Result<(), anyhow::Error> {
 
     let mut index = 0;
     loop {
-        let variables = tokens_view::Variables {
-            timestamp: timestamp.to_string(),
-        };
+        // from_millis(100) なので、リトライ間隔を100ミリ秒ごとに
+        let result = retry(delay::Fixed::from_millis(100).take(5), || {
+            let variables = tokens_view::Variables {
+                timestamp: timestamp.to_string(),
+            };
 
-        let response_body = post_graphql::<TokensView, _>(
-            &client,
-            "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
+            let response_body = post_graphql::<TokensView, _>(
+                &client,
+                "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2
 ",
-            variables,
-        )
-        .unwrap();
+                variables,
+            )
+            .unwrap();
 
-        println!("res error {:?}", response_body.errors);
+            println!("res error {:?}", response_body.errors);
 
-        let response_data: tokens_view::ResponseData =
-            response_body.data.expect("missing response data");
+            if response_body.errors == None {
+                return Ok(response_body);
+            } else {
+                return Err(response_body);
+            }
+        });
+        let response_data = result
+            .expect("post_graphql failed")
+            .data
+            .expect("missing data");
 
         let hash_set_temp = hash_set.clone();
 
@@ -91,8 +103,8 @@ fn main() -> Result<(), anyhow::Error> {
         if hash_set.len() == hash_set_temp.len() {
             break;
         }
-        // wait for 1 seconds
-        let sleep_time= time::Duration::from_millis(1000);
+        // wait for milliseconds
+        let sleep_time = time::Duration::from_millis(100);
         thread::sleep(sleep_time);
     }
 
