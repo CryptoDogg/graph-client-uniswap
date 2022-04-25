@@ -55,7 +55,7 @@ fn main() -> Result<(), anyhow::Error> {
         )
         .unwrap();
 
-        info!("{:?}", response_body);
+        println!("res error {:?}", response_body.errors);
 
         let response_data: tokens_view::ResponseData =
             response_body.data.expect("missing response data");
