@@ -9,7 +9,7 @@ use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
 
-use self::models::{NewToken, Token};
+use self::models::{NewToken, Token, NewSwap, Swap};
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -26,6 +26,17 @@ pub fn create_token(conn: &PgConnection, address: &str, symbol: &str) -> Token {
 
     diesel::insert_into(tokens::table)
         .values(&new_token)
+        .get_result(conn)
+        .expect("Error saving new token")
+}
+
+pub fn create_swap(conn: &PgConnection, time: &chrono::NaiveDateTime, sold: &bool, symbol: &str, count: &i32) -> Swap {
+    use schema::swaps;
+
+    let new_swap = NewSwap { time, sold, symbol, count };
+
+    diesel::insert_into(swaps::table)
+        .values(&new_swap)
         .get_result(conn)
         .expect("Error saving new token")
 }

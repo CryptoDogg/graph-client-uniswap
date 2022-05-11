@@ -1,0 +1,8 @@
+-- Your SQL goes here
+CREATE TABLE swaps (
+  id SERIAL PRIMARY KEY,
+  time TIMESTAMP NOT NULL,
+  sold BOOLEAN NOT NULL,
+  symbol TEXT NOT NULL,
+  count INTEGER NOT NULL
+)

@@ -14,7 +14,7 @@ use std::collections::{HashMap, HashSet};
 use std::time::SystemTime;
 use std::{thread, time};
 
-// use graphql_query_github_example::*;
+use graphql_query_github_example::*;
 
 #[allow(clippy::upper_case_acronyms)]
 type BigDecimal = String;
@@ -36,7 +36,7 @@ fn main() -> Result<(), anyhow::Error> {
         .build()?;
 
     let start_time = Local::now();
-    let mut timestamp = start_time.timestamp() - 3600 * 24;
+    let mut timestamp = start_time.timestamp() - 100 * 24;
 
     let mut sold_tokens = HashMap::new();
     let mut bought_tokens = HashMap::new();
@@ -108,7 +108,7 @@ fn main() -> Result<(), anyhow::Error> {
         thread::sleep(sleep_time);
     }
 
-    fn hashmap_sort(hashmap: &HashMap<String, usize>) -> Vec<(&String, &usize)> {
+    fn hashmap_sort(hashmap: &HashMap<String, i32>) -> Vec<(&String, &i32)> {
         let mut vector: Vec<_> = hashmap.into_iter().collect();
         vector.sort_by(|x, y| y.1.cmp(&x.1));
         vector
@@ -130,10 +130,19 @@ fn main() -> Result<(), anyhow::Error> {
     );
     println!("{}", text_sold);
     println!("{}", text_bought);
-    slack_send(format!(
-        "{}{}{}{}{}{}{}",
-        header, "\n", total_swap, "\n", text_sold, "\n", text_bought
-    ));
+    // slack_send(format!(
+    //     "{}{}{}{}{}{}{}",
+    //     header, "\n", total_swap, "\n", text_sold, "\n", text_bought
+    // ));
+
+    let connection = establish_connection();
+
+    for elm in hashmap_sort(&sold_tokens).get(..10).unwrap() {
+        let swap = create_swap(&connection, &start_time.naive_local(), &true, elm.0, elm.1);
+    }
+    for elm in hashmap_sort(&bought_tokens).get(..10).unwrap() {
+        let swap = create_swap(&connection, &start_time.naive_local(), &false, elm.0, elm.1);
+    }
 
     Ok(())
 }
