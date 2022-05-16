@@ -1,11 +1,11 @@
 name: test
 
-on: [push]
-# on:
-#   schedule:
-#     # 月曜日の 11:00 (JST) に処理を実行する。
-#     # UTC の 02:00 は JST だと 11:00 。
-#     - cron: '00 03 * * *'
+# on: [push]
+on:
+  schedule:
+    # 月曜日の 11:00 (JST) に処理を実行する。
+    # UTC の 02:00 は JST だと 11:00 。
+    - cron: '00 03 * * *'
 
 jobs:
   save_at_cloud_sql:

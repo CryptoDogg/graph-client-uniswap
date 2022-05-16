@@ -36,7 +36,7 @@ fn main() -> Result<(), anyhow::Error> {
         .build()?;
 
     let start_time = Local::now();
-    let mut timestamp = start_time.timestamp() - 100 * 24;
+    let mut timestamp = start_time.timestamp() - 3600 * 24;
 
     let mut sold_tokens = HashMap::new();
     let mut bought_tokens = HashMap::new();
