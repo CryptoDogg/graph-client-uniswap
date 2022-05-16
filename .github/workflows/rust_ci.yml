@@ -23,8 +23,9 @@ jobs:
         with:
           creds: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_B64 }} # creds with b64
           instance: ${{ secrets.INSTANCE }}
+          port: 13306
       - name: run
         env: # Or as an environment variable
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          DATABASE_URL: postgres://postgres:password@localhost/graphql_client
+          DATABASE_URL: postgres://postgres:password@localhost:13306/graphql_client
         run: cargo run --verbose
