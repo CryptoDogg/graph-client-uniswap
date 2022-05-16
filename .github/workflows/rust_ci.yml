@@ -21,7 +21,7 @@ jobs:
         run: cargo build --verbose
       - uses: brettski/gce-cloudsql-proxy-action@v2
         with:
-          creds: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_B64 }} # update creds with b64
+          creds: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_B64 }} # creds with b64
           instance: ${{ secrets.INSTANCE }}
       - name: run
         env: # Or as an environment variable
